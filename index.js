@@ -12,7 +12,8 @@ import doctorRoutes from "./routes/doctorRoutes.js";
 import reportsRoutes from "./routes/reportsRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import sendEmail from "./Services/emailService.js";
-
+import zoomRoutes from "./routes/zoomRoutes.js";
+import chatbotRoutes from "./routes/chatbotRoutes.js";
 
 const app = express();
 
@@ -25,6 +26,9 @@ app.use("/api/patients", patientRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/zoom", zoomRoutes);
+app.use("/api/patients", patientRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 // MongoDB connection
 const connectDB = async () => {

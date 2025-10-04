@@ -6,7 +6,7 @@ import User from "../models/User.js";
 import multer from "multer";
 import path from "path";
 import uploadPDF from "../middleware/uploadMiddleware.js";
-import { downloadConditionPDF, getMyrecord } from "../controllers/patient.js";
+import { downloadConditionPDF, getMyrecord, getPatientZoomLink, updateZoomMeeting } from "../controllers/patient.js";
 // import { uploadPatientPDF } from "../../../../controllers/patientController.js"
 import {
   createPatient,
@@ -75,5 +75,8 @@ router.delete("/:id", protect, deletePatient);
 router.post("/upload/:id", uploadPDF.single("file"), uploadPatientPDF);
 // Download PDF route
 router.get("/download-condition/:id", downloadConditionPDF);
+router.put("/:id/zoom-meeting", protect, updateZoomMeeting);
+// Patient fetches their meeting link
+router.get("/:id/zoom-meeting", protect, getPatientZoomLink);
 
 export default router;

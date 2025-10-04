@@ -45,7 +45,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    zoomLink: {
+      type: String,
+      required: false,
+      default: "",
+      trim: true,
+    },
+     notifications: {
+      type: [String],
+      default: [],
+    },
   },
+  
   { timestamps: true }
 );
 

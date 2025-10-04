@@ -457,3 +457,93 @@ export const downloadConditionPDF = async (req, res) => {
     res.status(404).json({ message: "File not found." });
   }
 };
+
+// Update Zoom Meeting Link for a Patient
+export const updateZoomMeeting = async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    const { zoomLink } = req.body;
+
+    if (!zoomLink) {
+      return res
+        .status(400)
+        .json({ success: false, msg: "Zoom link is required" });
+    }
+
+    // Ensure the user exists and is a patient
+    const patient = await User.findById(patientId);
+    if (!patient || patient.userType !== "patient") {
+      return res.status(404).json({ success: false, msg: "Patient not found" });
+    }
+
+    patient.zoomLink = zoomLink;
+    await patient.save();
+
+    res.json({ success: true, msg: "Zoom link updated successfully", patient });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, msg: "Server error" });
+  }
+};
+
+export const getPatientZoomLink = async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    console.log("dasdsds");
+    const patient = await User.findById(patientId);
+
+    if (!patient) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Patient not found" });
+    }
+    console.log(patient);
+
+    res.status(200).json({ success: true, patient });
+  } catch (err) {
+    console.error("Error in getPatientZoomLink:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Admin sends a notification to all users
+export const sendNotificationToAll = async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message || message.trim() === "") {
+      return res
+        .status(400)
+        .json({ success: false, msg: "Message cannot be empty" });
+    }
+
+    // Update all users by pushing the notification into their notifications array
+    await User.updateMany(
+      {}, // empty filter = all users
+      { $push: { notifications: message } }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, msg: "Notification sent to all users" });
+  } catch (error) {
+    console.error("Error sending notification:", error);
+    return res.status(500).json({ success: false, msg: "Server error" });
+  }
+};
+
+// Optional: Get notifications for logged-in user
+export const getUserNotifications = async (req, res) => {
+  try {
+    const userId = req.user.id; // Assuming you have auth middleware that sets req.user
+    const user = await User.findById(userId).select("notifications");
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, notifications: user.notifications });
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    return res.status(500).json({ success: false, msg: "Server error" });
+  }
+};
